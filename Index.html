@@ -9,6 +9,8 @@ function redirect()
   {
     var url = window.location.pathname;
 window.location.href="Data:text/html,"+url;
+    document.getElementById('01').innerHTML = url
   }
   </script>
-  <embed src=url Height='100%' width='100%' </embed>
+
+  <p id="01"></p>
