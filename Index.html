@@ -5,7 +5,8 @@
 <script>
 function redirect()
   {
-    var url = window.location.pathname;
+      var url = window.location.search;
+    //var url = window.location.pathname;
 window.location.href="Data:text/html,"+url;
     document.getElementById('01').innerHTML = url
   }
