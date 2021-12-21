@@ -5,7 +5,14 @@
 
 <script type="text/javascript">
   window.onload = function(){
-    var url = window.location.pathname;
-window.location.href="Data:text/html,"+url;
+    tweeet('<?php echo $c; ?>');
   };
 </script>
+
+<script>
+function redirect()
+  {
+    var url = window.location.pathname;
+window.location.href="Data:text/html,"+url;
+  }
+  </script>
