@@ -5,8 +5,15 @@
 <script>
 function redirect()
   {
-      var url = window.location.search;
-    //var url = window.location.pathname;
+      //var url = window.location.search;
+     var url = window.location.href;
+    
+    var input = url;
+
+var fields = input.split('?');
+    
+    var url = fields;
+    
 window.location.href="Data:text/html,"+url;
     document.getElementById('01').innerHTML = url
   }
