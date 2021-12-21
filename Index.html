@@ -1,7 +1,11 @@
 <title>404</title>
-Loaded.
-Running script...
-<script>
-var url = window.location.pathname;
-window.location.href="Data:text/html,"+url
+
+<p>Loaded.</P>
+<p>Running script...</p>
+
+<script type="text/javascript">
+  window.onload = function(){
+    var url = window.location.pathname;
+window.location.href="Data:text/html,"+url;
+  };
 </script>
