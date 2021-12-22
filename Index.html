@@ -6,15 +6,13 @@
 function redirect()
   {
       var url = window.location.search;
-     //var url = window.location.href;
-    
-    var input = url;
+     //var url = window.location.href
     
     const text1 = url;
 
-var fields = console.log(decodeURIComponent(text1));
+    console.log(decodeURIComponent(text1));
     
-    var url = fields;
+    var url = text1;
     
 window.location.href="Data:text/html,"+url;
     document.getElementById('01').innerHTML = url
