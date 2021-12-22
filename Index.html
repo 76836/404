@@ -5,12 +5,12 @@
 <script>
 function redirect()
   {
-      //var url = window.location.search;
-     var url = window.location.href;
+      var url = window.location.search;
+     //var url = window.location.href;
     
     var input = url;
 
-var fields = input.split('?');
+var fields = console.log(decodeURI(url));
     
     var url = fields;
     
