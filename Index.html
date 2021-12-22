@@ -10,7 +10,7 @@ function redirect()
     
     const text1 = url;
 
-    console.log(decodeURIComponent(text1));
+    $(url).html(decodeURIComponent(text1));
     
     var htm = text1;
     
