@@ -1,22 +1,22 @@
+<body id="renderbody" onload="renderpage();">
+<meta name="viewport" content="initial-scale=1">
 <title>404</title>
-
-<body onload="redirect() ;">
-
+<h1> 404: Page does not exist. </h1>
+<p>Append "?q=" + YourHTML to this URL to create a website that's hosted in it's own link.</p>
+<a href="https://github.com/76836/404">Click here to learn more</a>
 <script>
-function redirect()
-  {
-      var url = window.location.search;
-     //var url = window.location.href
-    
-    const text1 = url;
+   function renderpage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            if (query !== null) {
+                console.log('Query string found.');
+                document.getElementById('renderbody').innerHTML = query;
+            } else {
+                console.log('No query string found.');
+            };
+        };
 
-    (url).html(decodeURIComponent(text1));
-    
-    var htm = text1;
-    
-window.location.href="Data:text/html,"+url;
-    document.getElementById('01').innerHTML = htm
   }
-  </script>
+</script>
 
-  <p id="01"></p>
+</body>
