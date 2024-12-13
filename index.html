@@ -1,20 +1,80 @@
-<body id="renderbody" onload="renderpage();">
-<meta name="viewport" content="initial-scale=1">
-<title>404</title>
-<h> 404: Page does not exist. </h>
-<h1>Append "?q=" + YourHTML to this URL to create a website that's hosted in it's own link.</h1>
-<a href="https://github.com/76836/404">Click here to learn more</a>
-<script>
-   function renderpage() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const query = urlParams.get('q');
-            if (query !== null) {
-                console.log('Query string found.');
-                document.getElementById('renderbody').innerHTML = query;
-            } else {
-                console.log('No query string found.');
-            };
-        };
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Page Renderer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        #renderbody {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .default-message {
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body id="renderbody">
+    <h1 class="default-message">404: Page does not exist</h1>
+    <p class="default-message">Append "?q=" + YourHTML to this URL to create a website that's hosted in its own link.</p>
+    <p class="default-message"><a href="https://github.com/76836/404">Click here to learn more</a></p>
 
+    <script>
+        function renderpage() {
+            try {
+                // Decode the query parameter to handle special characters
+                const urlParams = new URLSearchParams(window.location.search);
+                const query = urlParams.get('q');
+                
+                if (query !== null && query.trim() !== '') {
+                    // Decode and sanitize the input to prevent XSS
+                    const sanitizedQuery = DOMPurify.sanitize(decodeURIComponent(query));
+                    
+                    // Clear existing content
+                    document.body.innerHTML = '';
+                    
+                    // Create a container for the rendered content
+                    const renderContainer = document.createElement('div');
+                    renderContainer.innerHTML = sanitizedQuery;
+                    document.body.appendChild(renderContainer);
+                    
+                    // Update the page title if a title is found in the rendered content
+                    const titleElement = renderContainer.querySelector('title');
+                    if (titleElement) {
+                        document.title = titleElement.textContent;
+                    }
+                    
+                    console.log('Page successfully rendered from query.');
+                } else {
+                    console.log('No valid query string found.');
+                }
+            } catch (error) {
+                console.error('Error rendering page:', error);
+                document.body.innerHTML = `
+                    <h1 class="default-message">Error Rendering Page</h1>
+                    <p class="default-message">An error occurred while trying to render the page.</p>
+                `;
+            }
+        }
+
+        // Load DOMPurify for XSS protection
+        function loadDOMPurify() {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js';
+            script.onload = renderpage;
+            document.head.appendChild(script);
+        }
+
+        // Call loadDOMPurify when the page loads
+        window.addEventListener('load', loadDOMPurify);
+    </script>
 </body>
+</html>
