@@ -3,78 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Page Renderer</title>
+    <title>HTML Query Renderer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
-        #renderbody {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+        #renderFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
-        .default-message {
-            color: #666;
+        #fallbackMessage {
+            display: none;
             text-align: center;
+            padding: 20px;
         }
     </style>
 </head>
-<body id="renderbody">
-    <h1 class="default-message">404: Page does not exist</h1>
-    <p class="default-message">Append "?q=" + YourHTML to this URL to create a website that's hosted in its own link.</p>
-    <p class="default-message"><a href="https://github.com/76836/404">Click here to learn more</a></p>
+<body>
+    <iframe id="renderFrame"></iframe>
+    <div id="fallbackMessage">
+        <h1>Invalid or Missing HTML</h1>
+        <p>Append your HTML to the URL using ?q=</p>
+        <p>Example: yourpage.html?q=&lt;h1&gt;Hello World&lt;/h1&gt;</p>
+    </div>
 
     <script>
-        function renderpage() {
-            try {
-                // Decode the query parameter to handle special characters
-                const urlParams = new URLSearchParams(window.location.search);
-                const query = urlParams.get('q');
-                
-                if (query !== null && query.trim() !== '') {
-                    // Decode and sanitize the input to prevent XSS
-                    const sanitizedQuery = DOMPurify.sanitize(decodeURIComponent(query));
+        function sanitizeHTML(html) {
+            // Basic HTML sanitization to prevent script injection
+            const temp = document.createElement('div');
+            temp.textContent = html;
+            return temp.innerHTML;
+        }
+
+        function renderPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            const renderFrame = document.getElementById('renderFrame');
+            const fallbackMessage = document.getElementById('fallbackMessage');
+
+            if (query) {
+                try {
+                    // Decode and sanitize the query
+                    const decodedQuery = decodeURIComponent(query);
+                    const sanitizedHtml = sanitizeHTML(decodedQuery);
+
+                    // Create data URI
+                    const dataUri = `data:text/html;charset=utf-8,${encodeURIComponent(sanitizedHtml)}`;
                     
-                    // Clear existing content
-                    document.body.innerHTML = '';
-                    
-                    // Create a container for the rendered content
-                    const renderContainer = document.createElement('div');
-                    renderContainer.innerHTML = sanitizedQuery;
-                    document.body.appendChild(renderContainer);
-                    
-                    // Update the page title if a title is found in the rendered content
-                    const titleElement = renderContainer.querySelector('title');
-                    if (titleElement) {
-                        document.title = titleElement.textContent;
-                    }
-                    
-                    console.log('Page successfully rendered from query.');
-                } else {
-                    console.log('No valid query string found.');
+                    // Set iframe source
+                    renderFrame.src = dataUri;
+                    renderFrame.style.display = 'block';
+                    fallbackMessage.style.display = 'none';
+                } catch (error) {
+                    renderFrame.style.display = 'none';
+                    fallbackMessage.style.display = 'block';
+                    console.error('Rendering error:', error);
                 }
-            } catch (error) {
-                console.error('Error rendering page:', error);
-                document.body.innerHTML = `
-                    <h1 class="default-message">Error Rendering Page</h1>
-                    <p class="default-message">An error occurred while trying to render the page.</p>
-                `;
+            } else {
+                renderFrame.style.display = 'none';
+                fallbackMessage.style.display = 'block';
             }
         }
 
-        // Load DOMPurify for XSS protection
-        function loadDOMPurify() {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js';
-            script.onload = renderpage;
-            document.head.appendChild(script);
-        }
-
-        // Call loadDOMPurify when the page loads
-        window.addEventListener('load', loadDOMPurify);
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', renderPage);
     </script>
 </body>
 </html>
