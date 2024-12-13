@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Query Renderer</title>
+    <title>404: server not found!</title>
     <style>
         body, html {
             margin: 0;
@@ -32,13 +32,6 @@
     </div>
 
     <script>
-        function sanitizeHTML(html) {
-            // Basic HTML sanitization to prevent script injection
-            const temp = document.createElement('div');
-            temp.textContent = html;
-            return temp.innerHTML;
-        }
-
         function renderPage() {
             const urlParams = new URLSearchParams(window.location.search);
             const query = urlParams.get('q');
@@ -47,12 +40,11 @@
 
             if (query) {
                 try {
-                    // Decode and sanitize the query
+                    // Fully decode the query
                     const decodedQuery = decodeURIComponent(query);
-                    const sanitizedHtml = sanitizeHTML(decodedQuery);
 
-                    // Create data URI
-                    const dataUri = `data:text/html;charset=utf-8,${encodeURIComponent(sanitizedHtml)}`;
+                    // Create data URI with full HTML rendering
+                    const dataUri = `data:text/html;charset=utf-8,${encodeURIComponent(decodedQuery)}`;
                     
                     // Set iframe source
                     renderFrame.src = dataUri;
